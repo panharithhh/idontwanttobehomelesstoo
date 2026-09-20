@@ -50,13 +50,27 @@ def find_chunk_boundaries(
 
 
 ## Usage
-with open(..., "rb") as f:
-    num_processes = 4
-    boundaries = find_chunk_boundaries(f, num_processes, b"<|endoftext|>")
+#
+# `find_chunk_boundaries` above is the helper the handout gives you for splitting a
+# corpus into chunks you can pre-tokenize in parallel. The demo below shows the shape
+# of that loop -- point it at a corpus file to try it:
+#
+#     uv run cs336_basics/pretokenization_example.py data/TinyStoriesV2-GPT4-valid.txt
+#
+if __name__ == "__main__":
+    import sys
 
-    # The following is a serial implementation, but you can parallelize this
-    # by sending each start/end pair to a set of processes.
-    for start, end in zip(boundaries[:-1], boundaries[1:]):
-        f.seek(start)
-        chunk = f.read(end - start).decode("utf-8", errors="ignore")
-        # Run pre-tokenization on your chunk and store the counts for each pre-token
+    if len(sys.argv) != 2:
+        sys.exit(f"usage: {sys.argv[0]} <corpus.txt>")
+
+    with open(sys.argv[1], "rb") as f:
+        num_processes = 4
+        boundaries = find_chunk_boundaries(f, num_processes, b"<|endoftext|>")
+
+        # The following is a serial implementation, but you can parallelize this
+        # by sending each start/end pair to a set of processes.
+        for start, end in zip(boundaries[:-1], boundaries[1:]):
+            f.seek(start)
+            chunk = f.read(end - start).decode("utf-8", errors="ignore")
+            # Run pre-tokenization on your chunk and store the counts for each pre-token
+            print(f"chunk {start}-{end}: {len(chunk)} chars")

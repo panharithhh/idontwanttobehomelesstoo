@@ -161,3 +161,20 @@ cython_debug/
 
 .ruff_cache/
 *.zip
+# --- CS336 assignment artifacts (added for safe auto-push) ---
+# NOTE: .gitignore has no trailing comments -- a pattern runs to end of line.
+# corpora (multi-GB, see README download step)
+data/
+*.txt.gz
+# training output
+out/
+checkpoints/
+wandb/
+# model checkpoints
+*.pt
+*.pth
+# tokenized arrays / binaries
+*.npy
+*.bin
+*.pkl
+.DS_Store
