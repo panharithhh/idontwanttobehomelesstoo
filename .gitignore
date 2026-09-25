@@ -178,3 +178,5 @@ wandb/
 *.bin
 *.pkl
 .DS_Store
+# personal study material, kept out of the submission
+studyartifact/
