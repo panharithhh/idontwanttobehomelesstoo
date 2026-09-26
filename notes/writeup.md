@@ -12,25 +12,33 @@ How I use this file: copy the question in, run whatever the handout suggests in 
 
 Run: `chr(0)`
 
-Observed:
+Observed: "x/00' 
 
-Answer:
+Answer: It will return null
 
 **(b) How does this character's `__repr__()` differ from its printed representation?**
 
 Run: `chr(0)` on its own line, then `print(chr(0))`. Compare the two outputs.
 
-Observed:
+Observed: chr(0) will return "\x00' as for print()  it will return nth 
 
-Answer:
+Answer: the Reason is that it return as x/00 it's a way of python showing a charactre it cna't show you , as for the print statement since chr(0) represent null so the print will show in a str way which is nothing  
+
+a.it returns a one-character string containing the null character (U+0000).  
+b.  Since chr(0) represent null so print will show in a str way which is nothing Because it's a control character with no glyph. 
+
+keep in mind 
+**Control characters: 0–31, plus 127 (delete).**
+**glyph isn';t a character it is a drawn shape of one**. 
+
 
 **(c) What happens when this character occurs in text?**
 
 Run: `"this is a test" + chr(0) + "string"`, then `print("this is a test" + chr(0) + "string")`.
 
-Observed:
+Observed: so a have len of 21 and b have len of 20 
 
-Answer:
+Answer: the reason is that print consider it as getting convered already as a empty value as for A since we just len() including the null which b donest have 
 
 ---
 
