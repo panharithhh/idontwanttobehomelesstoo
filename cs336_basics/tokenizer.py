@@ -1,4 +1,4 @@
-def get_stats(ids):
+def get_stats(ids)-> dict: # this is just 
     counts = {}
     for pair in zip(ids, ids[1:]):
         counts[pair] = counts.get(pair, 0) + 1
@@ -28,7 +28,7 @@ def train(text, vocab_size, verbose=False):
         stats = get_stats(ids)
         if not stats:                                # nothing left to merge
             break
-        pair = max(stats, key=stats.get)             # most frequent pair
+        pair = max(stats, key=lambda p: (stats[p], p), )             # most frequent pair
         ids = merge(ids, pair, idx)
         merges[pair] = idx
         vocab[idx] = vocab[pair[0]] + vocab[pair[1]]
@@ -38,6 +38,6 @@ def train(text, vocab_size, verbose=False):
     return vocab, merges
 
 
-vocab, merges = train("aaabdaaabac", 259)
+vocab, merges = train("cd cd abab", 257)
 print(merges)      
 print(vocab[258])  
