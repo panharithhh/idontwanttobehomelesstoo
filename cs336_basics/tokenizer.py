@@ -18,6 +18,9 @@ def merge(ids, pair, idx):
     return out
 
 def train(text, vocab_size, verbose=False):
+
+    #merges: list[tuple[bytes, bytes]]
+
     ids = list(text.encode("utf-8"))                 # raw bytes as ints 0..255
 
     vocab = {i: bytes([i]) for i in range(256)}
@@ -37,7 +40,7 @@ def train(text, vocab_size, verbose=False):
             print(f"merge {idx - 255}/{vocab_size - 256}: {pair} -> {idx} {vocab[idx]} ({stats[pair]}x)")
 
         for i in range(len(merges)):
-            merges_list.append(merges.keys(i))
+            merges_list.append(tuple(merges.keys()))
 
     return vocab, merges_list
 
