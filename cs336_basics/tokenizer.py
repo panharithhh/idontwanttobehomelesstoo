@@ -22,7 +22,7 @@ def train(text, vocab_size, verbose=False):
 
     vocab = {i: bytes([i]) for i in range(256)}
     # 257 : b "cd" 
-    merges_list = {}
+    merges_list = []
     merges = {} # (97,98) -> 257 
 
     for idx in range(256, vocab_size):
@@ -36,10 +36,10 @@ def train(text, vocab_size, verbose=False):
         if verbose:
             print(f"merge {idx - 255}/{vocab_size - 256}: {pair} -> {idx} {vocab[idx]} ({stats[pair]}x)")
 
-        for i in range(merges):
+        for i in range(len(merges)):
             merges_list.append(merges[i])
 
-    return vocab, merges
+    return vocab, merges_list
 
 def encode():
     pass
