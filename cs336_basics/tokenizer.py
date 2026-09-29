@@ -83,9 +83,10 @@ def decode():
 # ?[^\s\p{L}\p{N}]+	an optional space, then a run of anything that isn't a space, letter or digit (punctuation)	"!!", " -"
 # \s+(?!\S) and \s+	leftover whitespace, like double spaces or trailing spaces	" "
 
-with open("/Users/cheapanharith/AI/standform-LLMSCRATCH/idontwanttobehomelesstoo/data/TinyStoriesV2-GPT4-train.txt", "r", encoding="utf-8") as f:
-    text = f.read()
+# with open("/Users/cheapanharith/AI/standform-LLMSCRATCH/idontwanttobehomelesstoo/data/TinyStoriesV2-GPT4-train.txt", "r", encoding="utf-8") as f:
+#     text = f.read()
 
-vocab, merges = train(text,  260)
+text = "cd cd abab"
+vocab, merges = train(text,  258)
 print(merges)      
 print(vocab[258]) 
