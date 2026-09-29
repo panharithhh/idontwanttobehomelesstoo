@@ -37,7 +37,7 @@ def train(text, vocab_size, verbose=False):
             print(f"merge {idx - 255}/{vocab_size - 256}: {pair} -> {idx} {vocab[idx]} ({stats[pair]}x)")
 
         for i in range(len(merges)):
-            merges_list.append(merges[i])
+            merges_list.append(merges.keys(i))
 
     return vocab, merges_list
 
