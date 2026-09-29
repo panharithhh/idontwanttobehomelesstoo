@@ -23,14 +23,13 @@ def train(text, vocab_size, verbose=False):
     vocab = {i: bytes([i]) for i in range(256)}
     # 257 : b "cd" 
 
-
     merges = {} # (97,98) -> 257 
 
     for idx in range(256, vocab_size):
         stats = get_stats(ids)
         if not stats:                                # nothing left to merge
             break
-        pair = max(stats, key=lambda p: (stats[p], p[0], p[1]), )             # most frequent pair 
+        pair = max(stats, key=lambda p: (stats[p], vocab[p[0]], vocab[p[1]]), )             # most frequent pair 
         ids = merge(ids, pair, idx)
         merges[pair] = idx
         vocab[idx] = vocab[pair[0]] + vocab[pair[1]]
@@ -39,7 +38,14 @@ def train(text, vocab_size, verbose=False):
 
     return vocab, merges
 
+def encode():
+    pass
 
-vocab, merges = train("cd cd abab", 257)
+def decode():
+    pass
+
+
+
+vocab, merges = train("cd cd abab", 260)
 print(merges)      
 print(vocab[258])  
