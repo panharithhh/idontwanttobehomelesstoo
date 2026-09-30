@@ -6,7 +6,6 @@ def get_stats(ids)-> dict: # this is just
         counts[pair] = counts.get(pair, 0) + 1
     return counts
 
-
 def merge(ids, pair, idx):
     out = []
     i = 0
@@ -49,12 +48,12 @@ def train(text, vocab_size, verbose=False):
         merges[pair] = idx
         vocab[idx] = vocab[pair[0]] + vocab[pair[1]]
 
-        print(type(pair[0])) 
 
         merges_list.append((vocab[pair[0]], vocab[pair[1]]))
         if verbose:
             print(f"merge {idx - 255}/{vocab_size - 256}: {pair} -> {idx} {vocab[idx]} ({stats[pair]}x)")
 
+    print("-----")
     return vocab, merges_list
 
 
@@ -75,7 +74,7 @@ def decode():
 #     text = f.read()
 
 text = "cd cd abab"
-vocab, merges = train(text,  260)
+vocab, merges = train(text,  269)
 print(pattern.findall("cd cd abab"))
 print(len(merges))
 
