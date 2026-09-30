@@ -33,7 +33,7 @@ def train(text, vocab_size, verbose=False):
 
     #merges: list[tuple[bytes, bytes]]
     text = pattern.findall(text) # this will return a list of string 
-    ids = [list(chunk.encode("utf-8") for chunk in text)]
+    ids = list(chunk.encode("utf-8") for chunk in text)
     vocab = {i: bytes([i]) for i in range(256)}
     # 257 : b "cd" 
     merges_list = []
@@ -47,8 +47,6 @@ def train(text, vocab_size, verbose=False):
         ids = merge(ids, pair, idx)
         merges[pair] = idx
         vocab[idx] = vocab[pair[0]] + vocab[pair[1]]
-
-
         merges_list.append((vocab[pair[0]], vocab[pair[1]]))
         if verbose:
             print(f"merge {idx - 255}/{vocab_size - 256}: {pair} -> {idx} {vocab[idx]} ({stats[pair]}x)")
@@ -63,18 +61,18 @@ def encode():
 def decode():
     pass
 
+
 # Piece of the pattern	Matches	Example
 # '(?:[sdmt]|ll|ve|re)	contraction endings	's, 'll, 're
 # ?\p{L}+	an optional space, then a run of letters	" text", "some"
 # ?\p{N}+	an optional space, then a run of digits	" 100"
 # ?[^\s\p{L}\p{N}]+	an optional space, then a run of anything that isn't a space, letter or digit (punctuation)	"!!", " -"
 # \s+(?!\S) and \s+	leftover whitespace, like double spaces or trailing spaces	" "
-
 # with open("/Users/cheapanharith/AI/standform-LLMSCRATCH/idontwanttobehomelesstoo/data/TinyStoriesV2-GPT4-train.txt", "r", encoding="utf-8") as f:
 #     text = f.read()
 
 text = "cd cd abab"
-vocab, merges = train(text,  269)
+vocab, merges = train(text, 269)
 print(pattern.findall("cd cd abab"))
 print(len(merges))
 
