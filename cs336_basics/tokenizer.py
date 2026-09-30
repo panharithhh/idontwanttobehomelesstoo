@@ -77,8 +77,7 @@ def decode():
 text = "cd cd abab"
 vocab, merges = train(text,  260)
 print(pattern.findall("cd cd abab"))
-print(merges)      
-
+print(len(merges))
 
 # Pre-tokenization pattern: 7 alternatives, tried in order at each position; the first one that matches wins.
 # \p{...} is a Unicode category (needs the `regex` module, not stdlib `re`):
