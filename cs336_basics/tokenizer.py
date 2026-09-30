@@ -75,7 +75,8 @@ def decode():
 #     text = f.read()
 
 text = "cd cd abab"
-vocab, merges = train(text,  258)
+vocab, merges = train(text,  260)
+print(pattern.findall("cd cd abab"))
 print(merges)      
 
 
