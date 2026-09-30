@@ -33,8 +33,8 @@ pattern = re.compile("|".join([
 def train(text, vocab_size, verbose=False):
 
     #merges: list[tuple[bytes, bytes]]
-    text = pattern.findall(text)
-    ids = (text.encode("utf-8"))                 # raw bytes as ints 0..255
+    text = pattern.findall(text) # this will return a list of string 
+    ids = [list(chunk.encode("utf-8") for chunk in text)]
     vocab = {i: bytes([i]) for i in range(256)}
     # 257 : b "cd" 
     merges_list = []
@@ -77,4 +77,20 @@ def decode():
 text = "cd cd abab"
 vocab, merges = train(text,  258)
 print(merges)      
-print(vocab[258]) 
+
+
+# Pre-tokenization pattern: 7 alternatives, tried in order at each position; the first one that matches wins.
+# \p{...} is a Unicode category (needs the `regex` module, not stdlib `re`):
+#   L letter, Lu upper, Ll lower, Lt titlecase, Lm modifier letter, Lo other letter (CJK etc.), N number, M combining mark
+#   "upper-ish" below = Lu Lt Lm Lo M, "lower-ish" = Ll Lm Lo M
+#
+# 1. optional leading char (not newline/letter/digit: a space, quote, punctuation...) + optional upper-ish letters
+#    + 1+ lower-ish letters + optional contraction ('s 't 're 've 'm 'll 'd, any case)
+#    -> "Hello", " world", "don't"; also splits camelCase where lower meets upper
+# 2. same, but 1+ upper-ish letters and the lower-ish part is optional -> ALL-CAPS words like " NASA"
+# 3. 1 to 3 digits, no leading space attached -> "12345" becomes "123", "45"
+# 4. optional space + 1+ chars that are not whitespace/letter/digit (punctuation, symbols, emoji)
+#    + optional trailing \r \n or /  -> " ...", "!!\n"
+# 5. a whitespace run up through its last newline -> "\n\n", "  \n"
+# 6. a whitespace run, but if a non-space char follows it stops one short so the last space can attach to the next token
+# 7. any leftover whitespace (fallback)
