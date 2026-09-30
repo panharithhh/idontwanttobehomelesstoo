@@ -51,11 +51,10 @@ def train(text, vocab_size, verbose=False):
         if verbose:
             print(f"merge {idx - 255}/{vocab_size - 256}: {pair} -> {idx} {vocab[idx]} ({stats[pair]}x)")
 
-    print("-----")
     return vocab, merges_list
 
 
-def encode():
+def encode(text):
     pass
 
 def decode():
