@@ -34,7 +34,7 @@ def train(text, vocab_size, verbose=False):
 
     #merges: list[tuple[bytes, bytes]]
     text = pattern.findall(text)
-    ids = list(text.encode("utf-8"))                 # raw bytes as ints 0..255
+    ids = (text.encode("utf-8"))                 # raw bytes as ints 0..255
     vocab = {i: bytes([i]) for i in range(256)}
     # 257 : b "cd" 
     merges_list = []
@@ -57,18 +57,6 @@ def train(text, vocab_size, verbose=False):
 
     return vocab, merges_list
 
-
-pattern = re.compile(r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+""")
-
-# pattern = re.compile("|".join([
-#     r"""[^\r\n\p{L}\p{N}]?[\p{Lu}\p{Lt}\p{Lm}\p{Lo}\p{M}]*[\p{Ll}\p{Lm}\p{Lo}\p{M}]+(?i:'s|'t|'re|'ve|'m|'ll|'d)?""",
-#     r"""[^\r\n\p{L}\p{N}]?[\p{Lu}\p{Lt}\p{Lm}\p{Lo}\p{M}]+[\p{Ll}\p{Lm}\p{Lo}\p{M}]*(?i:'s|'t|'re|'ve|'m|'ll|'d)?""",
-#     r"""\p{N}{1,3}""",
-#     r""" ?[^\s\p{L}\p{N}]+[\r\n/]*""",
-#     r"""\s*[\r\n]+""",
-#     r"""\s+(?!\S)""",
-#     r"""\s+""",
-# ])) gpt 4o regex pattern
 
 def encode():
     pass
