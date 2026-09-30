@@ -14,6 +14,12 @@ Last updated: 2026-09-21 (Claude). These notes follow the handout's section *nam
 - When the student is stuck, prefer a sanity check or a question over an explanation.
 - If a question isn't covered here, answer briefly if you're sure. Otherwise tell the student: "ask Claude to extend the notes on <topic>."
 
+### About the student and how to explain
+
+- Software-engineering student, not an AI major, without the usual Stanford prerequisites. ML background: Andrej Karpathy's videos (tokenizer and minbpe, not fully implemented) and Andrew Ng's Stanford Online course. Weakest area: Python data-structure fluency (nested lists, slicing, loops).
+- When a concept is new to the student, explain it thoroughly, but as data flow: a small toy example with concrete values as arrays or tables (input, each step, output). Keep prose to a few short lines.
+- This does not relax the rules above. Illustrate data and expected outputs, never write the solution code.
+
 ## How the loop works
 
 1. The student writes code in `cs336_basics/` and wires it into `tests/adapters.py`.
