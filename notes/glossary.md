@@ -56,6 +56,44 @@ Plain-language meanings for the terms that come up in Assignment 1. Add to it wh
 
 **Memory-mapped file (`np.memmap`)** — a file that acts like an array without being fully loaded into RAM. The OS pages in pieces as you touch them.
 
+## Indexing a list of lists
+
+A list of lists needs one pair of brackets per level. A comma inside one bracket is a different feature.
+
+```
+grid = [[10, 20, 30],
+        [40, 50, 60]]
+```
+
+| Expression | Result | Why |
+|---|---|---|
+| `grid[1]` | `[40, 50, 60]` | the first bracket picks an inner list |
+| `grid[1][1]` | `50` | the second bracket indexes into that inner list |
+| `grid[1][1:]` | `[50, 60]` | the second bracket slices it: everything from position 1 on |
+| `grid[1][:1]` | `[40]` | slice up to, not including, position 1: only the first element |
+| `grid[1, 1]` | `TypeError: list indices must be integers or slices, not tuple` | a comma inside one bracket builds the tuple `(1, 1)`, and a list can't be indexed by a tuple |
+| `grid[1,]` | same `TypeError` | `(1,)` is still a tuple |
+| `grid[1, 1:]` | same `TypeError` | `(1, slice)` is a tuple too |
+
+**Why the comma form exists:** NumPy arrays accept a tuple index and read it as "row, column", so `np.array(grid)[1, 1]` is `50`. If you're used to NumPy, the comma feels natural. On a plain Python list it is an error. Nested lists: chain the brackets. NumPy arrays: commas are fine.
+
+## Slices: which side of the colon
+
+For `row = [10, 20, 30]`:
+
+| Slice | Result | Reads as |
+|---|---|---|
+| `row[1:]` | `[20, 30]` | start at position 1, go to the end |
+| `row[:1]` | `[10]` | start at the beginning, stop before position 1 |
+| `row[:]` | `[10, 20, 30]` | everything |
+
+The number sits on the side of the colon that says what it does: `1:` *starts* at 1, `:1` *stops* at 1.
+
+This matters when you zip a list with a shifted copy of itself, because `zip` stops at the shorter one:
+
+- `zip(row, row[1:])` gives `(10, 20)` and `(20, 30)`: each element with its right-hand neighbor.
+- `zip(row, row[:1])` gives only `(10, 10)`: one pair, the first element with itself.
+
 ## Tokenizer terms (coming next)
 
 **Token** — one unit in the model's vocabulary. Here, a sequence of bytes.
