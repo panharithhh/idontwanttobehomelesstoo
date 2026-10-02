@@ -79,7 +79,7 @@ print(len(merges))
 # \p{...} is a Unicode category (needs the `regex` module, not stdlib `re`):
 #   L letter, Lu upper, Ll lower, Lt titlecase, Lm modifier letter, Lo other letter (CJK etc.), N number, M combining mark
 #   "upper-ish" below = Lu Lt Lm Lo M, "lower-ish" = Ll Lm Lo M
-#
+
 # 1. optional leading char (not newline/letter/digit: a space, quote, punctuation...) + optional upper-ish letters
 #    + 1+ lower-ish letters + optional contraction ('s 't 're 've 'm 'll 'd, any case)
 #    -> "Hello", " world", "don't"; also splits camelCase where lower meets upper
