@@ -23,29 +23,22 @@ def merge(ids, pair, idx):
                 i += 1
     return out
 
-pattern = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
+pattern = re.compile(r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+""")
 
-def run_train_bpe(text, vocab_size, special_tokens,verbose=False): 
-
-    # pieces =re.split(re.escape(special_tokens), text) 
-
+def train(text, vocab_size, special_tokens,verbose=False): 
 
     remove_st = "|".join(map(re.escape, special_tokens))
 
     pieces = re.split(remove_st, text) 
  
-    print(f"pieces : {pieces}")
     pre_tokens = [] # This just have no more of the special token 
     for piece in pieces:
         pre_tokens.extend(pattern.findall(piece)) # this create a list of new word
 
-    print(f"pretokens: {pre_tokens}")
 
     ids = list(chunk.encode("utf-8") for chunk in pre_tokens)
 
     vocab = {i: bytes([i]) for i in range(256)}
- 
-    print(f"ids {ids}") 
     merges_list = []
     merges = {} # (97,98) -> 257 
 
