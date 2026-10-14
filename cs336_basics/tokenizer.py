@@ -1,6 +1,5 @@
 import regex as re
 
-
 def get_stats(ids)-> dict: # this is just 
     counts = {}
     for i in range(len(ids)):
@@ -26,7 +25,7 @@ def merge(ids, pair, idx):
 
 pattern = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
 
-def  run_train_bpe(text, vocab_size, special_tokens,verbose=False): 
+def run_train_bpe(text, vocab_size, special_tokens,verbose=False): 
 
     # pieces =re.split(re.escape(special_tokens), text) 
 
