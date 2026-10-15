@@ -563,8 +563,8 @@ def get_tokenizer(
 
 
 def run_train_bpe(
-    input_path: str | os.PathLike,
-    vocab_size: int,
+    input_path: ,
+    vocab_size: 400,
     special_tokens: list[str],
     **kwargs,
 ) -> tuple[dict[int, bytes], list[tuple[bytes, bytes]]]:
