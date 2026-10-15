@@ -591,4 +591,6 @@ def run_train_bpe(
     """
     with open(input_path, "r", encoding="utf-8") as f:
         text = f.read()
-    vocab, merg = train(text, 400,special_tokens)
+    vocab, merg = train(text, vocab_size,special_tokens)
+
+    return vocab, merg
