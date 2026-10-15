@@ -1,9 +1,8 @@
 import json
 import time
 
-from .adapters import run_train_bpe
+from cs336_basics.tokenizer import train
 from .common import FIXTURES_PATH, gpt2_bytes_to_unicode
-from ..cs336_basics.tokenizer import train
 
 def test_train_bpe_speed():
     """
