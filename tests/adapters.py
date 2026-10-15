@@ -563,7 +563,7 @@ def get_tokenizer(
 
 
 def run_train_bpe(
-    input_path: ,
+    input_path: , 
     vocab_size: 400,
     special_tokens: list[str],
     **kwargs,
