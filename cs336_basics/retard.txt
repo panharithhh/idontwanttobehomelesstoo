@@ -1,0 +1,21 @@
+in encode 
+
+from text to ids flow
+
+first the special token will be  will be marked by the ids by the split thing  
+
+then we merge it 
+
+return into ids 
+
+
+in train
+
+# two function we would need, get_stats, merge
+
+we do not care about the special token mark since we will be just adding it at the vocab 
+so therefore the train would not merge it 
+
+we use regex pattern to split it into words, as for the special token do we not read it  
+
+
