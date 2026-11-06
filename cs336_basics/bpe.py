@@ -1,120 +1,3 @@
-import regex as re 
-
-def merge(ids, pair, idx):
-    new_ids = {}
-    for k,v in ids.items():
-        
-        i = 0
-
-        new_chunk_ids = []
-
-        while i < len(k): 
-            if len(k) - i > 1 and pair[0] == k[i] and pair[1] == k[i+1]:
-                new_chunk_ids.append(idx)
-                i += 2
-
-            else :
-                new_chunk_ids.append(k[i]) 
-                i += 1
-
-        new_ids[tuple(new_chunk_ids)] = v
-
-    return new_ids
-
-pattern = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
-
-compiled = re.compile(pattern)
-
-def pretokenize(data: str, special_token : list) -> list: 
-
-    if special_token:
-
-        tokens = sorted(special_token, key=len, reverse=True)
-        toks =  "|".join(re.escape(t) for t in tokens)
-        chunks = re.split(toks, data)
-
-    else :
-        chunks = [data]
-
-    pre_tokens = []
-    for chunk in chunks:
-        #compiled is where the regex pattern is 
-        pre_tokens.extend(m.group(0) for m in compiled.finditer(chunk))
-        
-
-    return pre_tokens
-
-
-def get_stats(ids):
-    # The goal is
-    counts = {}
-
-    for k,v in ids.items():
-        for pair in list(zip(k, k[1:])):
-            counts[pair] = counts.get(pair,0) + v
-
-   
-    return counts
-
-def get_unique_pretoken(text):
-
-    word_counts = {} 
-
-    for word in text:
-        word_bytes = word.encode("utf-8") 
-        word_counts[word_bytes] = word_counts.get(word_bytes,0) +1
-
-    return word_counts 
-
-
-def train_bpe(input_path, vocab_size,special_tokens):
-
-    special_tokens = special_tokens or []
-
-    length_special_token = len(special_tokens)
-    
-    with open (input_path, encoding="utf-8") as f:
-        data = f.read()
-
-     
-    pre_tokens = pretokenize(data, special_tokens)
-
-    new_token_amount = vocab_size - 256 # new token amount
-    
-    idx = 255 
-
-    ids = get_unique_pretoken(pre_tokens)
-    
-    vocab = {}
-
-    merges = []
-
-    for i in range(256):
-        vocab[i] = bytes([i])
-
-    for _ in range(new_token_amount - len(special_tokens)):  # main training
-        stats = get_stats(ids) # tuples : counts 
-        if not stats:
-            break 
-        top_pair = max(stats, key=lambda p: (stats[p], vocab[p[0]], vocab[p[1]])) # return a tuple
-        
-        idx += 1 
-        ids = merge(ids,top_pair,idx)
-        vocab[idx] = vocab[top_pair[0]] + vocab[top_pair[1]]
-        merges.append((vocab[top_pair[0]], vocab[top_pair[1]]))
-
-
-    for i in range(len(special_tokens)):
-        special_token= str(special_tokens[i])
-        vocab[1 + i + idx] = special_token.encode("utf-8")
-        
-    
-    return vocab, merges 
-
-
-def tokenizer():
-    pass
-
 # =====================================================================
 # WHAT THE TESTS USE: only two "doors" (tests/adapters.py)
 # Everything else (helpers) is up to me. Tests never call them directly.
@@ -164,3 +47,119 @@ def tokenizer():
 # Run tests:  uv run pytest tests/test_train_bpe.py
 #             uv run pytest tests/test_tokenizer.py
 # =====================================================================
+
+import regex as re 
+
+def merge(ids, pair, idx):
+
+    new_ids = {}
+
+    for k,v in ids.items():        
+        i = 0
+        new_chunk_ids = []
+
+        while i < len(k): 
+            if len(k) - i > 1 and pair[0] == k[i] and pair[1] == k[i+1]:
+                new_chunk_ids.append(idx)
+                i += 2
+
+            else :
+                new_chunk_ids.append(k[i]) 
+                i += 1
+
+        new_ids[tuple(new_chunk_ids)] = v
+
+    return new_ids
+
+pattern = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
+
+compiled = re.compile(pattern)
+
+def pretokenize(data: str, special_token : list) -> list: 
+
+    if special_token:
+
+        tokens = sorted(special_token, key=len, reverse=True)
+        toks =  "|".join(re.escape(t) for t in tokens)
+        chunks = re.split(toks, data)
+
+    else :
+        chunks = [data]
+
+    pre_tokens = []
+    for chunk in chunks:
+        #compiled is where the regex pattern is 
+        pre_tokens.extend(m.group(0) for m in compiled.finditer(chunk))
+        
+    return pre_tokens
+
+
+
+def get_stats(ids):
+    # The goal is
+    counts = {}
+
+    for k,v in ids.items():
+        for pair in list(zip(k, k[1:])):
+            counts[pair] = counts.get(pair,0) + v
+
+   
+    return counts
+
+def get_unique_pretoken(text):
+
+    word_counts = {} 
+
+    for word in text:
+        word_bytes = word.encode("utf-8") 
+        word_counts[word_bytes] = word_counts.get(word_bytes,0) +1
+
+    return word_counts 
+
+def run_train_bpe(input_path, vocab_size,special_tokens):
+
+    special_tokens = special_tokens or []
+
+    length_special_token = len(special_tokens)
+    
+    with open (input_path, encoding="utf-8") as f:
+        data = f.read()
+
+     
+    pre_tokens = pretokenize(data, special_tokens)
+
+    new_token_amount = vocab_size - 256 # new token amount
+    
+    idx = 255 
+
+    ids = get_unique_pretoken(pre_tokens)
+    
+    vocab = {}
+
+    merges = []
+
+    for i in range(256):
+        vocab[i] = bytes([i])
+
+    for _ in range(new_token_amount - len(special_tokens)):  # main training
+        stats = get_stats(ids) # tuples : counts 
+        if not stats:
+            break 
+
+        
+        top_pair = max(stats, key=lambda p: (stats[p], vocab[p[0]], vocab[p[1]]))
+        
+        idx += 1 
+        ids = merge(ids,top_pair,idx)
+        vocab[idx] = vocab[top_pair[0]] + vocab[top_pair[1]]
+        merges.append((vocab[top_pair[0]], vocab[top_pair[1]]))
+
+
+    for i in range(len(special_tokens)):
+        special_token= str(special_tokens[i])
+        vocab[1 + i + idx] = special_token.encode("utf-8")
+        
+
+    # last
+    
+    return vocab, merges 
