@@ -119,9 +119,7 @@ def get_unique_pretoken(text):
 def train_bpe(input_path, vocab_size,special_tokens):
 
     special_tokens = special_tokens or []
-
-    length_special_token = len(special_tokens)
-    
+   
     with open (input_path, encoding="utf-8") as f:
         data = f.read()
 
