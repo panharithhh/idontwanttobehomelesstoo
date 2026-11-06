@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from collections.abc import Iterable
 from typing import IO, Any, BinaryIO
-
+from cs336_basics.bpe import run_train_bpe
 import numpy.typing as npt
 import torch
 from jaxtyping import Bool, Float, Int
@@ -590,6 +590,6 @@ def run_train_bpe(
     """
     with open(input_path, "r", encoding="utf-8") as f:
         text = f.read()
-    vocab, merg = train(text, vocab_size,special_tokens)
+    vocab, merge = run_train_bpe(text, vocab_size,special_tokens)
 
-    return vocab, merg
+    return vocab, merge
