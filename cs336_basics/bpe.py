@@ -1,52 +1,3 @@
-# =====================================================================
-# WHAT THE TESTS USE: only two "doors" (tests/adapters.py)
-# Everything else (helpers) is up to me. Tests never call them directly.
-# =====================================================================
-#
-# DOOR 1: run_train_bpe(input_path, vocab_size, special_tokens)
-#   -> calls my train
-#   in:   input_path      str | PathLike   path to the training text file
-#         vocab_size      int              final vocab size, INCLUDING
-#                                          256 bytes + merges + special tokens
-#         special_tokens  list[str]        e.g. ["<|endoftext|>"]
-#   out:  vocab           dict[int, bytes] id -> token bytes
-#         merges          list[tuple[bytes, bytes]]  in order of creation
-#   rule: only ONE place opens the file (adapter OR train, not both)
-#   tests (tests/test_train_bpe.py):
-#     - speed: corpus.en, vocab 500, must finish < 1.5 s
-#     - merges must EXACTLY equal the reference list (order + tie-break)
-#     - special tokens never merged into other tokens (no b"<|" inside)
-#
-# DOOR 2: get_tokenizer(vocab, merges, special_tokens=None)
-#   -> returns an object of my Tokenizer class
-#   class methods (handout p. 12):
-#     __init__(self, vocab, merges, special_tokens=None)
-#         vocab: dict[int, bytes], merges: list[tuple[bytes, bytes]],
-#         special_tokens: list[str] | None
-#         (append special tokens to vocab if not already there)
-#     from_files(cls, vocab_filepath, merges_filepath, special_tokens=None)
-#         classmethod: load saved vocab + merges, return a Tokenizer
-#     encode(self, text: str) -> list[int]
-#     encode_iterable(self, iterable: Iterable[str]) -> Iterator[int]
-#         yields ids lazily (big files, low memory)
-#     decode(self, ids: list[int]) -> str
-#         use errors="replace" for broken bytes
-#   tests (tests/test_tokenizer.py):
-#     - loaded with GPT-2's real vocab + ~50,000 merges
-#     - roundtrip: decode(encode(text)) == text
-#     - ids must match tiktoken exactly
-#     - special tokens (incl. overlapping), empty string, unicode
-#     - encode_iterable + memory limits
-#
-# HELPERS (mine, behind the doors):
-#   pretokenize          text -> list of pre-token strings (used by train + encode)
-#   get_unique_pretoken  pre-tokens -> {word ids: count}
-#   get_stats            {word ids: count} -> {pair: count}
-#   merge                {word ids: count}, pair, new id -> new {word ids: count}
-#
-# Run tests:  uv run pytest tests/test_train_bpe.py
-#             uv run pytest tests/test_tokenizer.py
-# =====================================================================
 import regex as re 
 
 def merge(ids, pair, idx):
@@ -161,3 +112,56 @@ def train_bpe(input_path, vocab_size,special_tokens):
     # last
     
     return vocab, merges 
+
+
+
+
+# =====================================================================
+# WHAT THE TESTS USE: only two "doors" (tests/adapters.py)
+# Everything else (helpers) is up to me. Tests never call them directly.
+# =====================================================================
+#
+# DOOR 1: run_train_bpe(input_path, vocab_size, special_tokens)
+#   -> calls my train
+#   in:   input_path      str | PathLike   path to the training text file
+#         vocab_size      int              final vocab size, INCLUDING
+#                                          256 bytes + merges + special tokens
+#         special_tokens  list[str]        e.g. ["<|endoftext|>"]
+#   out:  vocab           dict[int, bytes] id -> token bytes
+#         merges          list[tuple[bytes, bytes]]  in order of creation
+#   rule: only ONE place opens the file (adapter OR train, not both)
+#   tests (tests/test_train_bpe.py):
+#     - speed: corpus.en, vocab 500, must finish < 1.5 s
+#     - merges must EXACTLY equal the reference list (order + tie-break)
+#     - special tokens never merged into other tokens (no b"<|" inside)
+#
+# DOOR 2: get_tokenizer(vocab, merges, special_tokens=None)
+#   -> returns an object of my Tokenizer class
+#   class methods (handout p. 12):
+#     __init__(self, vocab, merges, special_tokens=None)
+#         vocab: dict[int, bytes], merges: list[tuple[bytes, bytes]],
+#         special_tokens: list[str] | None
+#         (append special tokens to vocab if not already there)
+#     from_files(cls, vocab_filepath, merges_filepath, special_tokens=None)
+#         classmethod: load saved vocab + merges, return a Tokenizer
+#     encode(self, text: str) -> list[int]
+#     encode_iterable(self, iterable: Iterable[str]) -> Iterator[int]
+#         yields ids lazily (big files, low memory)
+#     decode(self, ids: list[int]) -> str
+#         use errors="replace" for broken bytes
+#   tests (tests/test_tokenizer.py):
+#     - loaded with GPT-2's real vocab + ~50,000 merges
+#     - roundtrip: decode(encode(text)) == text
+#     - ids must match tiktoken exactly
+#     - special tokens (incl. overlapping), empty string, unicode
+#     - encode_iterable + memory limits
+#
+# HELPERS (mine, behind the doors):
+#   pretokenize          text -> list of pre-token strings (used by train + encode)
+#   get_unique_pretoken  pre-tokens -> {word ids: count}
+#   get_stats            {word ids: count} -> {pair: count}
+#   merge                {word ids: count}, pair, new id -> new {word ids: count}
+#
+# Run tests:  uv run pytest tests/test_train_bpe.py
+#             uv run pytest tests/test_tokenizer.py
+# =====================================================================
