@@ -173,7 +173,7 @@ class Tokenizer:
         self.vocab = vocab
         self.rev_vocab = {b: i for i,b in vocab.items()}
         self.ranks = {pair: i for i, pair in enumerate(merges)}
-        self.special_tokens = special_tokens
+        self.special_tokens = special_tokens or []
 
         self.list_specialtoken_enc = []
 
