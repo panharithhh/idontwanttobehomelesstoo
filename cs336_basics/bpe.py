@@ -96,7 +96,7 @@ def train_bpe(input_path, vocab_size,special_tokens):
         stats = get_stats(ids) # tuples : counts 
         if not stats:
             break 
-        top_pair = max(stats, key=stats.get) # return a tuple
+        top_pair = max(stats, key=lambda p: (stats[p], vocab[p[0]], vocab[p[1]])) # return a tuple
         
         idx += 1 
         ids = merge(ids,top_pair,idx)
@@ -108,13 +108,12 @@ def train_bpe(input_path, vocab_size,special_tokens):
         special_token= str(special_tokens[i])
         vocab[1 + i + idx] = special_token.encode("utf-8")
         
-
-    # last
     
     return vocab, merges 
 
 
-
+def tokenizer():
+    pass
 
 # =====================================================================
 # WHAT THE TESTS USE: only two "doors" (tests/adapters.py)
