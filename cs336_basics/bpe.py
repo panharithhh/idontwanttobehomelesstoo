@@ -48,6 +48,7 @@
 #             uv run pytest tests/test_tokenizer.py
 # =====================================================================
 
+import enum
 import regex as re 
 
 def merge(ids, pair, idx):
@@ -161,10 +162,66 @@ def train_bpe(input_path, vocab_size,special_tokens):
     
     return vocab, merges 
 
+token_ids = []
+pattern = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
+re_chunk = []
 
-def encode():
-    pass
+
+    
+class Tokenizer:
+    def __init__(self,vocab,merges,special_tokens=None):
+        self.vocab = vocab
+        self.rev_vocab = {b: i for i,b in vocab.items()}
+        self.ranks = {pair: i for i, pair in enumerate(merges)}
+        self.special_tokens = special_tokens
+
+        self.list_specialtoken_enc = []
+
+        for i in range(len(special_tokens)):
+            self.list_specialtoken_enc.append(special_tokens[i].encode("utf-8")) 
+
+    def encode(self, text):
+        token_ids = []
+ 
+        special_pattern ="|".join(re.escape(t) for t in self.special_tokens)
+
+        pieces = re.split(f"({special_pattern})",text )
+
+        piece_bytes = []
+
+        for i in range(len(pieces)):
+            
+            piece_bytes.append(pieces[i].encode("utf-8"))
+
+        for i in range(len(piece_bytes)):
+            if piece_bytes[i] in self.list_specialtoken_enc:
+                token_ids.append(self.rev_vocab[piece_bytes[i]] )
+            else:  
+
+                # token_ids.append(pieces[i])
+                chunk = pieces[i] 
+
+                pre_tokens = pretokenize(chunk,False)
 
 
-def decode():
-    pass
+                for chunk in pre_tokens:
+                    parts = [bytes([b]) for b in chunk.encode("utf-8")]
+
+                    while len(parts) > 1:
+                        best = min(zip(parts, parts[1:]), key=lambda p: self.ranks.get(p, float("inf")))
+                        if best not in self.ranks:
+                            break
+
+                        i = 0
+                        while i < len(parts) - 1:
+                            if (parts[i], parts[i + 1]) == best:
+                                parts[i:i + 2] = [parts[i] + parts[i + 1]]
+                            i += 1
+                    token_ids.extend(self.rev_vocab[p] for p in parts)
+        
+        return token_ids 
+
+    def decode(self, ids):
+        c = b''.join(self.vocab[token_id] for token_id in ids)
+        text = c.decode("utf-8", errors="replace")
+        return text
