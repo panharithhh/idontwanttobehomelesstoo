@@ -116,7 +116,7 @@ def get_unique_pretoken(text):
     return word_counts 
 
 
-def run_train_bpe(input_path, vocab_size,special_tokens):
+def train_bpe(input_path, vocab_size,special_tokens):
 
     special_tokens = special_tokens or []
 

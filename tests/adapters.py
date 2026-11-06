@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from collections.abc import Iterable
 from typing import IO, Any, BinaryIO
-from cs336_basics.bpe import run_train_bpe
+from cs336_basics.bpe import train_bpe
 import numpy.typing as npt
 import torch
 from jaxtyping import Bool, Float, Int
@@ -588,8 +588,8 @@ def run_train_bpe(
                 representing that <token1> was merged with <token2>.
                 Merges are ordered by order of creation.
     """
-    with open(input_path, "r", encoding="utf-8") as f:
-        text = f.read()
-    vocab, merge = run_train_bpe(text, vocab_size,special_tokens)
+
+
+    vocab, merge = train_bpe(input_path, vocab_size,special_tokens)
 
     return vocab, merge
