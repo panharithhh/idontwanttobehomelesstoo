@@ -116,7 +116,7 @@ def get_unique_pretoken(text):
 
     return word_counts 
 
-def run_train_bpe(input_path, vocab_size,special_tokens):
+def train_bpe(input_path, vocab_size,special_tokens):
 
     special_tokens = special_tokens or []
 
@@ -145,10 +145,9 @@ def run_train_bpe(input_path, vocab_size,special_tokens):
         stats = get_stats(ids) # tuples : counts 
         if not stats:
             break 
+       
+        top_pair = max(stats, key=lambda p: (stats[p], vocab[p[0]], vocab[p[1]])) 
 
-        
-        top_pair = max(stats, key=lambda p: (stats[p], vocab[p[0]], vocab[p[1]]))
-        
         idx += 1 
         ids = merge(ids,top_pair,idx)
         vocab[idx] = vocab[top_pair[0]] + vocab[top_pair[1]]
@@ -163,3 +162,11 @@ def run_train_bpe(input_path, vocab_size,special_tokens):
     # last
     
     return vocab, merges 
+
+
+def encode():
+    pass
+
+
+def decode():
+    pass

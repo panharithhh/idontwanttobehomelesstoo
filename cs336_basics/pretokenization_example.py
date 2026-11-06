@@ -7,13 +7,17 @@ def find_chunk_boundaries(
     desired_num_chunks: int,
     split_special_token: bytes,
 ) -> list[int]:
+
     """
     Chunk the file into parts that can be counted independently.
     May return fewer chunks if the boundaries end up overlapping.
     """
+
+
     assert isinstance(split_special_token, bytes), "Must represent special token as a bytestring"
 
     # Get total file size in bytes
+
     file.seek(0, os.SEEK_END)
     file_size = file.tell()
     file.seek(0)
@@ -41,7 +45,7 @@ def find_chunk_boundaries(
             # Find the special token in the mini chunk
             found_at = mini_chunk.find(split_special_token)
             if found_at != -1:
-                chunk_boundaries[bi] = initial_position + found_at
+                chunk_boundaries[bi] =   initial_position + found_at
                 break
             initial_position += mini_chunk_size
 
@@ -56,7 +60,7 @@ def find_chunk_boundaries(
 # of that loop -- point it at a corpus file to try it:
 #
 #     uv run cs336_basics/pretokenization_example.py data/TinyStoriesV2-GPT4-valid.txt
-#
+
 if __name__ == "__main__":
     import sys
 
@@ -69,6 +73,7 @@ if __name__ == "__main__":
 
         # The following is a serial implementation, but you can parallelize this
         # by sending each start/end pair to a set of processes.
+
         for start, end in zip(boundaries[:-1], boundaries[1:]):
             f.seek(start)
             chunk = f.read(end - start).decode("utf-8", errors="ignore")
