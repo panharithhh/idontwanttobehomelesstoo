@@ -561,7 +561,6 @@ def get_tokenizer(
     """
 
     tokenizer = Tokenizer(vocab,merges,special_tokens)
-
     return tokenizer
 
 
