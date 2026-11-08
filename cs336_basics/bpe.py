@@ -203,7 +203,6 @@ class Tokenizer:
 
                 pre_tokens = pretokenize(chunk,False)
 
-
                 for chunk in pre_tokens:
                     parts = [bytes([b]) for b in chunk.encode("utf-8")]
 
