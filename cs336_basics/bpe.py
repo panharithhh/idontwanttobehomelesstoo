@@ -177,8 +177,8 @@ class Tokenizer:
 
         self.list_specialtoken_enc = []
 
-        for i in range(len(special_tokens)):
-            self.list_specialtoken_enc.append(special_tokens[i].encode("utf-8")) 
+        for i in range(len(self.special_tokens)):
+            self.list_specialtoken_enc.append(self.special_tokens[i].encode("utf-8")) 
 
     def encode(self, text):
         token_ids = []
