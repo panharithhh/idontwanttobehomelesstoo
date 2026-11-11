@@ -29,7 +29,7 @@ def run_linear(
     Returns:
         Float[Tensor, "... d_out"]: The transformed output of your linear module.
     """
-    linear = Linear( d_in,d_out,weights)
+    linear = Linear( d_in,d_out)
 
     out = linear.forward(in_features)
 
