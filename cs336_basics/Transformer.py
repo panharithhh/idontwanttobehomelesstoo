@@ -48,7 +48,7 @@ class Linear(nn.Module):
         self.out_features = out_features
         self.device = device
         self.dtype = dtype
-        self.weights = nn.Parameter(torch.ones(self.out_features, self.infeatures))
+        self.weights = nn.Parameter(self.out_features, self.infeatures)
         variance, std = variance_and_std(self.infeatures, self.out_features)
         self.weights = trunc_normal_(self.weights, mean=0, std = std, a = -3*std, b=3*std)
 
