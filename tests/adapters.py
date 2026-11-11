@@ -5,6 +5,7 @@ from collections.abc import Iterable
 from typing import IO, Any, BinaryIO
 from cs336_basics.bpe import train_bpe
 from cs336_basics.bpe import Tokenizer
+from cs336_basics.Transformer import Linear
 import numpy.typing as npt
 import torch
 from jaxtyping import Bool, Float, Int
@@ -28,8 +29,11 @@ def run_linear(
     Returns:
         Float[Tensor, "... d_out"]: The transformed output of your linear module.
     """
+    linear = Linear( d_in,d_out,weights)
 
-    raise NotImplementedError
+    out = linear.forward(in_features)
+
+    return out
 
 
 def run_embedding(

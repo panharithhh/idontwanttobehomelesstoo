@@ -5,6 +5,11 @@ from einops import einsum
 from torch.nn.init import trunc_normal_
 import torch.nn as nn
 
+#   in_dim (int): The size of the input dimension
+#         out_dim (int): The size of the output dimension
+#         weights (Float[Tensor, "d_out d_in"]): The linear weights to use
+#         in_features (Float[Tensor, "... d_in"]): The output tensor to apply the function to
+
 class Transgender():
     pass
 
@@ -43,7 +48,7 @@ class Linear(nn.Module):
         self.out_features = out_features
         self.device = device
         self.dtype = dtype
-        self.weights = nn.Parameter(torch.ones((self.out_features, self.infeatures), dtype=dtype))
+        self.weights = nn.Parameter(torch.ones(self.out_features, self.infeatures))
         variance, std = variance_and_std(self.infeatures, self.out_features)
         self.weights = trunc_normal_(self.weights, mean=0, std = std, a = -3*std, b=3*std)
 
