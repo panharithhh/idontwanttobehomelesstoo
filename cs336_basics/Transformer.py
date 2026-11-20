@@ -10,8 +10,9 @@ import torch.nn as nn
 #         weights (Float[Tensor, "d_out d_in"]): The linear weights to use
 #         in_features (Float[Tensor, "... d_in"]): The output tensor to apply the function to
 
-class Transgender():
+class Transgender:
     pass
+
 
 # class Linear():
 
@@ -20,12 +21,11 @@ class Transgender():
 
 #     def forward(self, x):
 #         pass
-        
+
 # def variance_and_std(in_features, out_features):
-    
+
 #     variance = 2/(in_features+out_features)
 #     std = variance**(1/2)
-
 #     return variance,std
 
 class Transgender(nn.Module):
@@ -34,12 +34,9 @@ class Transgender(nn.Module):
 
 
 def variance_and_std(in_features, out_features):
-    
-    variance = 2/(in_features+out_features)
-    std = variance**(1/2)
+    std = 2/(in_features+out_features)**(1/2)
+    return std
 
-    return variance,std
-    
 class Linear(nn.Module):
     def __init__(self, in_features=None, out_features=None, device=None, dtype=None):
 
@@ -48,13 +45,13 @@ class Linear(nn.Module):
         self.out_features = out_features
         self.device = device
         self.dtype = dtype
-        self.weights = nn.Parameter(self.out_features, self.infeatures)
-        variance, std = variance_and_std(self.infeatures, self.out_features)
+        self.weights = nn.Parameter(torch.empty((self.out_features, self.infeatures)))
+        std = variance_and_std(self.infeatures, self.out_features)
         self.weights = trunc_normal_(self.weights, mean=0, std = std, a = -3*std, b=3*std)
 
 
     def forward(self, x : torch.Tensor):
-        
+
         output = einsum(x, self.weights, "... d_in, d_in d_out-> ... d_out")
 
         return output
