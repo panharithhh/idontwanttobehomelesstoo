@@ -28,9 +28,9 @@ class Transgender:
 #     std = variance**(1/2)
 #     return variance,std
 
-class Transgender(nn.Module):
-    def __init__(self, data = 2):
-        self.data = data
+# class Transgender(nn.Module):
+#     def __init__(self, data = 2):
+#         self.data = data
 
 
 def variance_and_std(in_features, out_features):
