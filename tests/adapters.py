@@ -29,8 +29,7 @@ def run_linear(
     Returns:
         Float[Tensor, "... d_out"]: The transformed output of your linear module.
     """
-    linear = Linear( d_in,d_out)
-
+    linear = Linear( d_in,d_out,weights)
     out = linear.forward(in_features)
 
     return out
@@ -569,14 +568,14 @@ def get_tokenizer(
 
 
 def run_train_bpe(
-    input_path: str | os.PathLike, 
+    input_path: str | os.PathLike,
     vocab_size: int,
     special_tokens: list[str],
     **kwargs,
 ) -> tuple[dict[int, bytes], list[tuple[bytes, bytes]]]:
     """Given the path to an input corpus, run train a BPE tokenizer and
     output its vocabulary and merges.
-    
+
     Args:
         input_path (str | os.PathLike): Path to BPE tokenizer training data.
         vocab_size (int): Total number of items in the tokenizer's vocabulary (including special tokens).

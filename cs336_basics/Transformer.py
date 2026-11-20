@@ -20,20 +20,21 @@ def variance_and_std(in_features, out_features):
     return std
 
 class Linear(nn.Module):
-    def __init__(self, in_features, out_features, device=None, dtype=None):
+    def __init__(self, in_features, out_features, weights ,device=None, dtype=None):
 
         super().__init__()
         self.infeatures = in_features
         self.out_features = out_features
         self.device = device
         self.dtype = dtype
-        self.weights = nn.Parameter(torch.empty((self.out_features, self.infeatures)))
+        self.weights = nn.Parameter(weights)
         std = variance_and_std(self.infeatures, self.out_features)
         self.weights = trunc_normal_(self.weights, mean=0, std = std, a = -3*std, b=3*std)
 
 
     def forward(self, x : torch.Tensor):
-
+        # x is (4,12,64)
+        # w is (128,64)
         output = einsum(x, self.weights, "... d_in, d_out d_in -> ... d_out")
 
         return output
