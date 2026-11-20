@@ -31,7 +31,7 @@ def run_linear(
         Float[Tensor, "... d_out"]: The transformed output of your linear module.
     """
     linear = Linear( d_in,d_out)
-    linear.weights = weights
+    linear.weights.data = weights
     out = linear.forward(in_features)
 
     return out
