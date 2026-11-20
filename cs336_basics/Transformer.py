@@ -14,27 +14,9 @@ class Transgender:
     pass
 
 
-# class Linear():
-
-#     def __init__(self, in_features, out_features, device=None, dtype=None):
-#         super().__init__(...)
-
-#     def forward(self, x):
-#         pass
-
-# def variance_and_std(in_features, out_features):
-
-#     variance = 2/(in_features+out_features)
-#     std = variance**(1/2)
-#     return variance,std
-
-# class Transgender(nn.Module):
-#     def __init__(self, data = 2):
-#         self.data = data
-
-
 def variance_and_std(in_features, out_features):
-    std = 2/(in_features+out_features)**(1/2)
+    var = 2/(in_features+out_features)
+    std = (var)**(1/2)
     return std
 
 class Linear(nn.Module):
