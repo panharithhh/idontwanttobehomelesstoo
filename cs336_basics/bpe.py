@@ -48,24 +48,23 @@
 #             uv run pytest tests/test_tokenizer.py
 # =====================================================================
 
-import enum
-import regex as re 
+import regex as re
 
 def merge(ids, pair, idx):
 
     new_ids = {}
 
-    for k,v in ids.items():        
+    for k,v in ids.items():
         i = 0
         new_chunk_ids = []
 
-        while i < len(k): 
+        while i < len(k):
             if len(k) - i > 1 and pair[0] == k[i] and pair[1] == k[i+1]:
                 new_chunk_ids.append(idx)
                 i += 2
 
             else :
-                new_chunk_ids.append(k[i]) 
+                new_chunk_ids.append(k[i])
                 i += 1
 
         new_ids[tuple(new_chunk_ids)] = v
@@ -76,7 +75,7 @@ pattern = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S
 
 compiled = re.compile(pattern)
 
-def pretokenize(data: str, special_token : list) -> list: 
+def pretokenize(data: str, special_token : list) -> list:
 
     if special_token:
 
@@ -89,9 +88,9 @@ def pretokenize(data: str, special_token : list) -> list:
 
     pre_tokens = []
     for chunk in chunks:
-        #compiled is where the regex pattern is 
+        #compiled is where the regex pattern is
         pre_tokens.extend(m.group(0) for m in compiled.finditer(chunk))
-        
+
     return pre_tokens
 
 
@@ -104,35 +103,34 @@ def get_stats(ids):
         for pair in list(zip(k, k[1:])):
             counts[pair] = counts.get(pair,0) + v
 
-   
+
     return counts
 
 def get_unique_pretoken(text):
 
-    word_counts = {} 
+    word_counts = {}
 
     for word in text:
-        word_bytes = word.encode("utf-8") 
+        word_bytes = word.encode("utf-8")
         word_counts[word_bytes] = word_counts.get(word_bytes,0) +1
 
-    return word_counts 
+    return word_counts
 
 def train_bpe(input_path, vocab_size,special_tokens):
 
     special_tokens = special_tokens or []
-   
+
     with open (input_path, encoding="utf-8") as f:
         data = f.read()
 
-     
+
     pre_tokens = pretokenize(data, special_tokens)
 
-    new_token_amount = vocab_size - 256 # new token amount
-    
-    idx = 255 
+
+    idx = 255
 
     ids = get_unique_pretoken(pre_tokens)
-    
+
     vocab = {}
 
     merges = []
@@ -141,13 +139,13 @@ def train_bpe(input_path, vocab_size,special_tokens):
         vocab[i] = bytes([i])
 
     for _ in range(new_token_amount - len(special_tokens)):  # main training
-        stats = get_stats(ids) # tuples : counts 
+        stats = get_stats(ids) # tuples : counts
         if not stats:
-            break 
-       
-        top_pair = max(stats, key=lambda p: (stats[p], vocab[p[0]], vocab[p[1]])) 
+            break
 
-        idx += 1 
+        top_pair = max(stats, key=lambda p: (stats[p], vocab[p[0]], vocab[p[1]]))
+
+        idx += 1
         ids = merge(ids,top_pair,idx)
         vocab[idx] = vocab[top_pair[0]] + vocab[top_pair[1]]
         merges.append((vocab[top_pair[0]], vocab[top_pair[1]]))
@@ -156,18 +154,18 @@ def train_bpe(input_path, vocab_size,special_tokens):
     for i in range(len(special_tokens)):
         special_token= str(special_tokens[i])
         vocab[1 + i + idx] = special_token.encode("utf-8")
-        
+
 
     # last
-    
-    return vocab, merges 
+
+    return vocab, merges
 
 token_ids = []
 pattern = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
 re_chunk = []
 
 
-    
+
 class Tokenizer:
     def __init__(self,vocab,merges,special_tokens=None):
         self.vocab = vocab
@@ -178,11 +176,11 @@ class Tokenizer:
         self.list_specialtoken_enc = []
 
         for i in range(len(self.special_tokens)):
-            self.list_specialtoken_enc.append(self.special_tokens[i].encode("utf-8")) 
+            self.list_specialtoken_enc.append(self.special_tokens[i].encode("utf-8"))
 
     def encode(self, text):
         token_ids = []
- 
+
         special_pattern ="|".join(re.escape(t) for t in self.special_tokens)
 
         pieces = re.split(f"({special_pattern})",text )
@@ -190,18 +188,19 @@ class Tokenizer:
         piece_bytes = []
 
         for i in range(len(pieces)):
-            
+
             piece_bytes.append(pieces[i].encode("utf-8"))
 
         for i in range(len(piece_bytes)):
             if piece_bytes[i] in self.list_specialtoken_enc:
                 token_ids.append(self.rev_vocab[piece_bytes[i]] )
-            else:  
+            else:
 
                 # token_ids.append(pieces[i])
-                chunk = pieces[i] 
+                chunk = pieces[i]
 
                 pre_tokens = pretokenize(chunk,False)
+
 
                 for chunk in pre_tokens:
                     parts = [bytes([b]) for b in chunk.encode("utf-8")]
@@ -217,8 +216,8 @@ class Tokenizer:
                                 parts[i:i + 2] = [parts[i] + parts[i + 1]]
                             i += 1
                     token_ids.extend(self.rev_vocab[p] for p in parts)
-        
-        return token_ids 
+
+        return token_ids
 
     def decode(self, ids):
         c = b''.join(self.vocab[token_id] for token_id in ids)
